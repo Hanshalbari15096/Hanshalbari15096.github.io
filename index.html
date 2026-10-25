@@ -120,7 +120,7 @@
       height: auto;
       min-height: calc(100% + 1.5 * var(--u));
       object-fit: cover;
-      object-position: center top;
+      object-position: center 70%;
       z-index: 0;
       pointer-events: none;
       user-select: none;
@@ -129,7 +129,7 @@
     div.veil {
       position: absolute;
       inset: 0;
-      background: rgba(0, 0, 0, .06);
+      background: rgba(0, 0, 0, .03);
       z-index: 1;
       pointer-events: none;
     }
@@ -845,10 +845,10 @@
       left: 0;
       right: 0;
       bottom: -1px;
-      height: 120px;
+      height: 170px;
       z-index: 1;
       pointer-events: none;
-      background: linear-gradient(to bottom, rgba(6, 6, 9, 0) 0%, rgba(6, 6, 9, .45) 46%, rgba(6, 6, 9, .88) 78%, #060609 100%);
+      background: linear-gradient(to bottom, rgba(6, 6, 9, 0) 0%, rgba(6, 6, 9, .05) 38%, rgba(6, 6, 9, .24) 72%, rgba(6, 6, 9, .44) 92%, rgba(6, 6, 9, .55) 100%);
     }
 
     /* Page + shared layout */
@@ -856,8 +856,10 @@
       position: relative;
       z-index: 1;
       background:
-        radial-gradient(1200px 700px at 50% -10%, rgba(124, 58, 237, .08), transparent 70%),
-        linear-gradient(180deg, rgba(6, 6, 9, 0) 0%, rgba(8, 8, 13, .5) 42%, rgba(6, 6, 9, 0) 100%);
+        radial-gradient(1500px 900px at 50% -12%, rgba(124, 58, 237, .20), transparent 68%),
+        radial-gradient(900px 700px at 14% 6%, rgba(147, 51, 234, .13), transparent 72%),
+        radial-gradient(1000px 760px at 86% 10%, rgba(74, 222, 128, .05), transparent 72%),
+        linear-gradient(180deg, rgba(6, 6, 9, 0) 0%, rgba(8, 8, 13, .18) 45%, rgba(6, 6, 9, 0) 100%);
     }
 
     .page::before {
@@ -866,10 +868,73 @@
       left: 0;
       right: 0;
       top: 0;
-      height: 150px;
+      height: 200px;
       z-index: 0;
       pointer-events: none;
-      background: linear-gradient(to bottom, #060609 0%, rgba(6, 6, 9, .8) 34%, rgba(6, 6, 9, 0) 100%);
+      background: linear-gradient(to bottom, rgba(6, 6, 9, .42) 0%, rgba(24, 12, 48, .16) 38%, rgba(6, 6, 9, 0) 100%);
+    }
+
+    .page::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -100px;
+      width: min(1700px, 100%);
+      height: 640px;
+      transform: translateX(-50%);
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(32% 44% at 16% 40%, rgba(124, 58, 237, .30), transparent 72%),
+        radial-gradient(30% 42% at 40% 66%, rgba(147, 51, 234, .22), transparent 74%),
+        radial-gradient(34% 46% at 74% 42%, rgba(124, 58, 237, .26), transparent 72%),
+        radial-gradient(24% 34% at 90% 68%, rgba(74, 222, 128, .08), transparent 74%);
+      filter: blur(26px);
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 100%);
+    }
+
+    /* Continues the hero nebula past the fold, blending across the seam */
+    .cloud-band {
+      position: absolute;
+      top: -170px;
+      left: 0;
+      right: 0;
+      height: 420px;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, .18) 20%, rgba(0, 0, 0, .52) 32%, rgba(0, 0, 0, .9) 41%, #000 50%, rgba(0, 0, 0, .72) 63%, rgba(0, 0, 0, .36) 77%, rgba(0, 0, 0, .1) 90%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, .18) 20%, rgba(0, 0, 0, .52) 32%, rgba(0, 0, 0, .9) 41%, #000 50%, rgba(0, 0, 0, .72) 63%, rgba(0, 0, 0, .36) 77%, rgba(0, 0, 0, .1) 90%, transparent 100%);
+    }
+
+    .cloud-band-inner {
+      position: absolute;
+      inset: 0;
+      isolation: isolate;
+    }
+
+    /* Pulls the borrowed artwork back into the violet palette */
+    .cloud-band-inner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(155deg, rgba(124, 58, 237, .85), rgba(147, 51, 234, .7) 55%, rgba(74, 222, 128, .35));
+      mix-blend-mode: color;
+      pointer-events: none;
+    }
+
+    .cloud-band-inner::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 100vw;
+      height: 100dvh;
+      transform: translateX(-50%) scale(1.1);
+      background: url("https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/0bf7409c-9fa2-4bef-a49d-34903dcc91ad.png") 6% 88% / 240% auto no-repeat;
+      filter: blur(10px) saturate(1.35) brightness(1.02);
     }
 
     .shell {
@@ -2926,6 +2991,8 @@
   </div>
 
   <main class="page" id="main">
+    <div class="cloud-band" aria-hidden="true"><div class="cloud-band-inner"></div></div>
+
     <section class="page-section" id="projects" aria-labelledby="projects-title">
       <div class="shell">
         <header class="sec-head reveal">
