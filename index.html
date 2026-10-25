@@ -101,6 +101,13 @@
       border-radius: 4px;
     }
 
+    svg.sky-filter {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
     div.frame {
       position: relative;
       height: 100vh;
@@ -124,6 +131,8 @@
       z-index: 0;
       pointer-events: none;
       user-select: none;
+      /* Unsharp mask + a touch of contrast makes the footage read as photographic */
+      filter: url(#sky-sharpen) saturate(1.22) contrast(1.09) brightness(1.05);
     }
 
     div.veil {
@@ -132,6 +141,18 @@
       background: rgba(0, 0, 0, .03);
       z-index: 1;
       pointer-events: none;
+    }
+
+    /* Fine film grain keeps the flat illustration from looking plastic */
+    div.grain {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: .055;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
     }
 
     div.screen {
@@ -902,6 +923,7 @@
       right: 0;
       height: 420px;
       overflow: hidden;
+      isolation: isolate;
       z-index: 0;
       pointer-events: none;
       -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, .18) 20%, rgba(0, 0, 0, .52) 32%, rgba(0, 0, 0, .9) 41%, #000 50%, rgba(0, 0, 0, .72) 63%, rgba(0, 0, 0, .36) 77%, rgba(0, 0, 0, .1) 90%, transparent 100%);
@@ -914,14 +936,26 @@
       isolation: isolate;
     }
 
-    /* Pulls the borrowed artwork back into the violet palette */
+    .cloud-band::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      opacity: .07;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+    }
+
+    /* Pulls the borrowed artwork back into the violet palette and caps the highlights */
     .cloud-band-inner::after {
       content: "";
       position: absolute;
       inset: 0;
       z-index: 1;
-      background: linear-gradient(155deg, rgba(124, 58, 237, .85), rgba(147, 51, 234, .7) 55%, rgba(74, 222, 128, .35));
-      mix-blend-mode: color;
+      background: linear-gradient(155deg, #C084FC 0%, #A855F7 55%, #8B5CF6 100%);
+      mix-blend-mode: multiply;
       pointer-events: none;
     }
 
@@ -934,7 +968,7 @@
       height: 100dvh;
       transform: translateX(-50%) scale(1.1);
       background: url("https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/0bf7409c-9fa2-4bef-a49d-34903dcc91ad.png") 6% 88% / 240% auto no-repeat;
-      filter: blur(10px) saturate(1.35) brightness(1.02);
+      filter: blur(6px) saturate(1.5) brightness(1.18) contrast(1.04);
     }
 
     .shell {
@@ -2911,6 +2945,22 @@
 
 </head>
 <body>
+  <!-- Sharpen, local contrast and a highlight bloom for the hero footage -->
+  <svg class="sky-filter" width="0" height="0" aria-hidden="true" focusable="false">
+    <filter id="sky-sharpen" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.65" result="soft" />
+      <feComposite in="SourceGraphic" in2="soft" operator="arithmetic" k2="1.6" k3="-0.6" result="fine" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="wide" />
+      <feComposite in="fine" in2="wide" operator="arithmetic" k2="1.14" k3="-0.14" result="clarity" />
+      <feColorMatrix in="clarity" type="matrix"
+        values="1 0 0 0 -0.45  0 1 0 0 -0.45  0 0 1 0 -0.45  0 0 0 1 0" result="highlights" />
+      <feGaussianBlur in="highlights" stdDeviation="11" result="bloom" />
+      <feColorMatrix in="bloom" type="matrix"
+        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.55 0" result="bloomSoft" />
+      <feBlend in="clarity" in2="bloomSoft" mode="screen" />
+    </filter>
+  </svg>
+
   <header class="bar" data-open="false" data-scrolled="false">
     <a class="brand" href="#about" aria-label="Hanshal — home">
       <svg class="logo" viewBox="0 0 26.9 16.6" aria-hidden="true">
@@ -2965,6 +3015,7 @@
 
     <div class="veil"></div>
     <div class="hero-fade" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
 
     <div class="screen">
       <main class="hero">
